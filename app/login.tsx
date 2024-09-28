@@ -6,28 +6,32 @@ import {
   TouchableOpacity,
   Image,
   ImageBackground,
-  useColorScheme,
-  Platform,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import MaskedView from "@react-native-masked-view/masked-view";
 import { Ionicons } from "@expo/vector-icons";
+import { useTheme } from "../context/ThemeContext";
+import { Appearance } from "react-native"; // To get the system theme
 
 const HomeScreen: React.FC = () => {
-  const colorScheme = useColorScheme();
+  const { theme } = useTheme(); // Use the theme from the context
+  const systemTheme = Appearance.getColorScheme(); // Get the system theme (light or dark)
+  const currentTheme = theme === "system" ? systemTheme : theme; // Handle system theme
+
   const router = useRouter();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  // Conditionally set logo and background based on the current theme
   const logoSource =
-    colorScheme === "dark"
+    currentTheme === "dark"
       ? require("@/assets/images/logo-blue.png")
       : require("@/assets/images/logo-white.png");
 
   const backgroundImage =
-    colorScheme === "dark"
+    currentTheme === "dark"
       ? require("@/assets/images/background-grey.png")
       : require("@/assets/images/background-blue.png");
 
@@ -36,7 +40,6 @@ const HomeScreen: React.FC = () => {
       alert("Veuillez entrer votre e-mail et votre mot de passe.");
       return;
     }
-    alert(`Connexion réussie avec l'email : ${email}`);
     router.push("/dashboard");
   };
 
@@ -46,14 +49,14 @@ const HomeScreen: React.FC = () => {
       className="flex-1 justify-start items-center"
       resizeMode="cover"
     >
-      {/* Logo et texte Cleany */}
+      {/* Logo and text Cleany */}
       <View className="flex-row items-center mt-20">
         <Image
           source={logoSource}
           className="w-4/12 h-24 mb-4"
           resizeMode="contain"
         />
-        {colorScheme === "dark" ? (
+        {currentTheme === "dark" ? (
           <MaskedView
             maskElement={
               <Text className="text-3xl font-inter-semibold bg-transparent">
@@ -79,6 +82,7 @@ const HomeScreen: React.FC = () => {
         )}
       </View>
 
+      {/* Welcome message */}
       <View className="mt-8 items-center">
         <Text className="text-7xl font-inter-semibold text-slate-100 mt-28">
           Bonjour
@@ -88,12 +92,14 @@ const HomeScreen: React.FC = () => {
         </Text>
       </View>
 
+      {/* Login Form */}
       <View className="w-10/12 mt-10">
+        {/* Email input with icon */}
         <View className="flex-row items-center w-10/12 mx-auto py-3 px-4 mb-4 rounded-full bg-slate-100">
           <Ionicons
             name="mail-outline"
             size={24}
-            color={colorScheme === "dark" ? "#888" : "#000"}
+            color={currentTheme === "dark" ? "#888" : "#000"}
             className="mr-2"
           />
           <TextInput
@@ -102,16 +108,17 @@ const HomeScreen: React.FC = () => {
             placeholder="Email"
             keyboardType="email-address"
             autoCapitalize="none"
-            placeholderTextColor={colorScheme === "dark" ? "#888" : "#aaa"}
+            placeholderTextColor={currentTheme === "dark" ? "#888" : "#aaa"}
             className="flex-1 text-black m-1"
           />
         </View>
 
+        {/* Password input with icon */}
         <View className="flex-row items-center w-10/12 mx-auto py-3 px-4 mb-1 rounded-full bg-slate-100">
           <Ionicons
             name="lock-closed-outline"
             size={24}
-            color={colorScheme === "dark" ? "#888" : "#000"}
+            color={currentTheme === "dark" ? "#888" : "#000"}
             className="mr-2"
           />
           <TextInput
@@ -119,10 +126,12 @@ const HomeScreen: React.FC = () => {
             onChangeText={setPassword}
             placeholder="Mot de passe"
             secureTextEntry
-            placeholderTextColor={colorScheme === "dark" ? "#888" : "#aaa"}
+            placeholderTextColor={currentTheme === "dark" ? "#888" : "#aaa"}
             className="flex-1 text-black m-1"
           />
         </View>
+
+        {/* Forgot password link */}
         <TouchableOpacity
           onPress={() => alert("Mot de passe oublié ?")}
           className="w-10/12 mx-auto"
@@ -132,6 +141,7 @@ const HomeScreen: React.FC = () => {
           </Text>
         </TouchableOpacity>
 
+        {/* Login Button */}
         <TouchableOpacity
           onPress={handleLogin}
           className="flex-row items-center justify-center py-3 rounded-full bg-blue-500 w-2/12 ml-auto mr-7"
@@ -140,6 +150,7 @@ const HomeScreen: React.FC = () => {
         </TouchableOpacity>
       </View>
 
+      {/* Signup link */}
       <TouchableOpacity
         onPress={() => router.push("/signup")}
         className="absolute bottom-6 w-full items-center"

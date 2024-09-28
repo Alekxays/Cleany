@@ -2,6 +2,7 @@ import React from "react";
 import { Stack } from "expo-router";
 import { useFonts } from "expo-font";
 import { View, Text, ActivityIndicator } from "react-native";
+import { ThemeProvider } from "../context/ThemeContext";
 
 import {
   Inter_100Thin,
@@ -38,12 +39,14 @@ export default function RootLayout() {
   }
 
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-        gestureEnabled: true,
-        animation: "slide_from_right",
-      }}
-    />
+    <ThemeProvider>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          gestureEnabled: true,
+          animation: "slide_from_right",
+        }}
+      />
+    </ThemeProvider>
   );
 }

@@ -5,24 +5,25 @@ import {
   TouchableOpacity,
   Image,
   ImageBackground,
-  useColorScheme,
   Platform,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import MaskedView from "@react-native-masked-view/masked-view";
+import { useTheme } from "../context/ThemeContext";
 
 const HomeScreen: React.FC = () => {
-  const colorScheme = useColorScheme();
+  const { theme } = useTheme();
   const router = useRouter();
 
+  // Use the theme to determine what assets and styles to apply
   const logoSource =
-    colorScheme === "dark"
+    theme === "dark"
       ? require("@/assets/images/logo-blue.png")
       : require("@/assets/images/logo-white.png");
 
   const backgroundImage =
-    colorScheme === "dark"
+    theme === "dark"
       ? require("@/assets/images/background-grey.png")
       : require("@/assets/images/background-blue.png");
 
@@ -38,12 +39,12 @@ const HomeScreen: React.FC = () => {
         resizeMode="contain"
       />
 
-      {colorScheme === "dark" ? (
+      {theme === "dark" ? (
         <MaskedView
           maskElement={
             <Text
               style={{
-                fontSize: 40, // text-4xl
+                fontSize: 40,
                 fontFamily:
                   Platform.OS === "ios"
                     ? "Inter-SemiBold"
@@ -63,7 +64,7 @@ const HomeScreen: React.FC = () => {
             <Text
               style={{
                 opacity: 0,
-                fontSize: 40, // text-4xl
+                fontSize: 40,
                 fontFamily:
                   Platform.OS === "ios"
                     ? "Inter-SemiBold"
@@ -84,23 +85,33 @@ const HomeScreen: React.FC = () => {
         <Text className="text-slate-100 text-center text-lg ios:font-inter-semibold android:font-inter-semibold mb-2">
           De retour ? Connectez-vous !
         </Text>
-        <TouchableOpacity
-          onPress={() => router.push("/login")}
-          className="rounded-full w-10/12 mx-auto overflow-hidden mb-6"
-          activeOpacity={0.8}
-        >
-          <LinearGradient
-            colors={["#06b6d4", "#3b82f6"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            className="py-3 w-full justify-center items-center"
+        {theme === "dark" ? (
+          <TouchableOpacity
+            onPress={() => router.push("/login")}
+            className="rounded-full w-10/12 mx-auto overflow-hidden mb-6"
+            activeOpacity={0.8}
           >
-            <Text className="text-slate-100 text-center text-lg ios:font-inter-semibold android:font-inter-semibold">
+            <LinearGradient
+              colors={["#06b6d4", "#3b82f6"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              className="py-3 w-full justify-center items-center"
+            >
+              <Text className="text-slate-100 text-center text-lg ios:font-inter-semibold android:font-inter-semibold">
+                Connexion
+              </Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            className="py-3 rounded-lg bg-slate-100 mb-4 rounded-full w-10/12 mx-auto overflow-hidden mb-6"
+            onPress={() => router.push("/login")}
+          >
+            <Text className="text-sky-400 text-center text-lg font-inter-medium">
               Connexion
             </Text>
-          </LinearGradient>
-        </TouchableOpacity>
-
+          </TouchableOpacity>
+        )}
         <Text className="text-slate-100 text-center text-lg ios:font-inter-semibold android:font-inter-semibold mb-2">
           Vous êtes nouveau ? Inscrivez-vous !
         </Text>
