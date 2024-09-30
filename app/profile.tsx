@@ -11,23 +11,18 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { useTheme } from "../context/ThemeContext"; // Use your Theme Context
-import ThemeSelector from "../components/ThemeSelector"; // Import ThemeSelector
+import { useTheme } from "../context/ThemeContext";
+import ThemeSelector from "../components/ThemeSelector";
 
 const ProfilePage: React.FC = () => {
-  const { theme } = useTheme(); // Get the current theme from context
+  const { theme } = useTheme();
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
-
-  const handleThemeChange = (selectedTheme: string) => {
-    console.log("Selected theme:", selectedTheme);
-  };
 
   return (
     <ScrollView
       className={`flex-1 ${theme === "dark" ? "bg-zinc-900" : "bg-white"}`}
     >
-      {/* Header and Avatar */}
       <View className="relative">
         <ImageBackground
           source={require("../assets/images/background-blue.png")}
@@ -69,7 +64,6 @@ const ProfilePage: React.FC = () => {
         </View>
       </View>
 
-      {/* Reports Section */}
       <View className="p-4 mt-4 rounded-lg">
         <Text
           className={`text-xl font-bold mb-2 mt-16 ml-4 ${
@@ -89,7 +83,7 @@ const ProfilePage: React.FC = () => {
                 <Ionicons name="pricetag-outline" size={16} color="#fff" />
               </View>
               <View>
-                <Text className={`text-base font-bold ml-2 text-white`}>
+                <Text className="text-base font-bold ml-2 text-white">
                   Tag "SKIBIDI"
                 </Text>
                 <Text className="text-xs text-gray-400 ml-2">
@@ -106,7 +100,7 @@ const ProfilePage: React.FC = () => {
                 <Ionicons name="trash-outline" size={16} color="#fff" />
               </View>
               <View>
-                <Text className={`text-base font-bold ml-2 text-white`}>
+                <Text className="text-base font-bold ml-2 text-white">
                   Déchets
                 </Text>
                 <Text className="text-xs text-gray-500 dark:text-gray-400 ml-2">
@@ -123,7 +117,7 @@ const ProfilePage: React.FC = () => {
                 <Ionicons name="images-outline" size={16} color="#fff" />
               </View>
               <View>
-                <Text className={`text-base font-bold ml-2 text-white`}>
+                <Text className="text-base font-bold ml-2 text-white">
                   Autocollants
                 </Text>
                 <Text className="text-xs text-gray-500 dark:text-gray-400 ml-2">
@@ -139,7 +133,6 @@ const ProfilePage: React.FC = () => {
         </Text>
       </View>
 
-      {/* Search Bar */}
       <View className="p-4">
         <Text
           className={`font-semibold text-lg mb-4 mx-auto ${
@@ -160,7 +153,6 @@ const ProfilePage: React.FC = () => {
         </View>
       </View>
 
-      {/* Account Section */}
       <View className="p-4">
         <View className="flex-row items-center my-4">
           <View className="flex-1 h-[1px] bg-gray-500 mr-4" />
@@ -195,7 +187,6 @@ const ProfilePage: React.FC = () => {
           </TouchableOpacity>
         </LinearGradient>
 
-        {/* Application Section */}
         <View className="flex-row items-center my-4">
           <Text
             className={`text-base ml-32 mr-4 font-semibold ${
@@ -207,12 +198,8 @@ const ProfilePage: React.FC = () => {
           <View className="flex-1 h-[1px] bg-gray-500" />
         </View>
 
-        {/* Theme Settings */}
-        <View>
-          <ThemeSelector onThemeChange={handleThemeChange} />
-        </View>
+        <ThemeSelector />
 
-        {/* Legal Information */}
         <View className="mb-4">
           <TouchableOpacity
             className="flex-row justify-between items-center mt-4 rounded-lg"
@@ -264,7 +251,6 @@ const ProfilePage: React.FC = () => {
           </TouchableOpacity>
         </View>
 
-        {/* Assistance Section */}
         <View className="mb-4">
           <View className="flex-row justify-between items-center mb-2">
             <View className="border-b border-gray-500 flex-1 mr-2" />
@@ -323,7 +309,6 @@ const ProfilePage: React.FC = () => {
             />
           </TouchableOpacity>
 
-          {/* Logout Button */}
           <TouchableOpacity
             className="flex-row justify-between items-center mt-12"
             onPress={() => router.push("/")}

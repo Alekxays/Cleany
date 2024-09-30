@@ -16,16 +16,13 @@ const HomeScreen: React.FC = () => {
   const { theme } = useTheme();
   const router = useRouter();
 
-  // Use the theme to determine what assets and styles to apply
-  const logoSource =
-    theme === "dark"
-      ? require("@/assets/images/logo-blue.png")
-      : require("@/assets/images/logo-white.png");
-
-  const backgroundImage =
-    theme === "dark"
-      ? require("@/assets/images/background-grey.png")
-      : require("@/assets/images/background-blue.png");
+  const isDarkTheme = theme === "dark";
+  const logoSource = isDarkTheme
+    ? require("@/assets/images/logo-blue.png")
+    : require("@/assets/images/logo-white.png");
+  const backgroundImage = isDarkTheme
+    ? require("@/assets/images/background-grey.png")
+    : require("@/assets/images/background-blue.png");
 
   return (
     <ImageBackground
@@ -39,7 +36,7 @@ const HomeScreen: React.FC = () => {
         resizeMode="contain"
       />
 
-      {theme === "dark" ? (
+      {isDarkTheme ? (
         <MaskedView
           maskElement={
             <Text
@@ -81,42 +78,42 @@ const HomeScreen: React.FC = () => {
         </Text>
       )}
 
-      <View className=" w-full px-8 mt-8">
-        <Text className="text-slate-100 text-center text-lg ios:font-inter-semibold android:font-inter-semibold mb-2">
+      <View className="w-full px-8 mt-8">
+        <Text className="text-slate-100 text-center text-lg font-inter-semibold mb-2">
           De retour ? Connectez-vous !
         </Text>
-        {theme === "dark" ? (
-          <TouchableOpacity
-            onPress={() => router.push("/login")}
-            className="rounded-full w-10/12 mx-auto overflow-hidden mb-6"
-            activeOpacity={0.8}
-          >
+
+        <TouchableOpacity
+          onPress={() => router.push("/login")}
+          className={`rounded-full w-10/12 mx-auto overflow-hidden mb-6 ${
+            isDarkTheme ? "bg-transparent" : "bg-slate-100"
+          }`}
+          activeOpacity={0.8}
+        >
+          {isDarkTheme ? (
             <LinearGradient
               colors={["#06b6d4", "#3b82f6"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               className="py-3 w-full justify-center items-center"
             >
-              <Text className="text-slate-100 text-center text-lg ios:font-inter-semibold android:font-inter-semibold">
+              <Text className="text-slate-100 text-center text-lg font-inter-semibold">
                 Connexion
               </Text>
             </LinearGradient>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            className="py-3 rounded-lg bg-slate-100 mb-4 rounded-full w-10/12 mx-auto overflow-hidden mb-6"
-            onPress={() => router.push("/login")}
-          >
-            <Text className="text-sky-400 text-center text-lg font-inter-medium">
+          ) : (
+            <Text className="text-sky-400 text-center text-lg font-inter-medium py-3">
               Connexion
             </Text>
-          </TouchableOpacity>
-        )}
-        <Text className="text-slate-100 text-center text-lg ios:font-inter-semibold android:font-inter-semibold mb-2">
+          )}
+        </TouchableOpacity>
+
+        <Text className="text-slate-100 text-center text-lg font-inter-semibold mb-2">
           Vous êtes nouveau ? Inscrivez-vous !
         </Text>
+
         <TouchableOpacity
-          className="py-3 rounded-lg bg-slate-100 mb-4 rounded-full w-10/12 mx-auto overflow-hidden mb-6"
+          className="py-3 rounded-full bg-slate-100 w-10/12 mx-auto overflow-hidden mb-6"
           onPress={() => router.push("/signup")}
         >
           <Text className="text-sky-400 text-center text-lg font-inter-medium">

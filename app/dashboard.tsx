@@ -9,9 +9,9 @@ import { useRouter } from "expo-router";
 import { useTheme } from "../context/ThemeContext";
 
 const Dashboard: React.FC = () => {
-  const { theme } = useTheme(); // Use theme from context
-  const systemTheme = Appearance.getColorScheme(); // Get system theme (light or dark)
-  const currentTheme = theme === "system" ? systemTheme : theme; // Set theme based on system or user selection
+  const { theme } = useTheme();
+  const systemTheme = Appearance.getColorScheme();
+  const currentTheme = theme === "system" ? systemTheme : theme;
   const modalizeRef = useRef<Modalize>(null);
   const mapRef = useRef(null);
   const router = useRouter();
@@ -26,7 +26,6 @@ const Dashboard: React.FC = () => {
           goToNearestCompost={() => mapRef.current?.goToNearestCompost()}
         />
 
-        {/* Profile Button */}
         <TouchableOpacity
           onPress={() => router.push("/profile")}
           className={`absolute top-20 right-4 p-1 rounded-full ${
@@ -39,7 +38,6 @@ const Dashboard: React.FC = () => {
           />
         </TouchableOpacity>
 
-        {/* Menu Modal */}
         <Modalize
           ref={modalizeRef}
           snapPoint={100}

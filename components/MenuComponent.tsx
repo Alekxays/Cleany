@@ -8,16 +8,15 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { useTheme } from "../context/ThemeContext"; // Use your ThemeContext
+import { useTheme } from "../context/ThemeContext";
 
 const MenuComponent: React.FC = () => {
-  const { theme } = useTheme(); // Get the theme from context
+  const { theme } = useTheme();
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
 
   return (
     <ScrollView className="p-5">
-      {/* Search Bar */}
       <View className="flex-row items-center bg-zinc-600 rounded-lg px-3 py-2 mb-6">
         <Ionicons name="search" size={24} color="gray" className="mr-2" />
         <TextInput
@@ -30,7 +29,6 @@ const MenuComponent: React.FC = () => {
         <Ionicons name="mic-outline" size={24} color="gray" className="ml-2" />
       </View>
 
-      {/* Favorites Section */}
       <Text
         className={`${
           theme === "dark" ? "text-white" : "text-black"
@@ -59,7 +57,6 @@ const MenuComponent: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      {/* Recent Reports Section */}
       <Text
         className={`${
           theme === "dark" ? "text-white" : "text-black"
@@ -121,7 +118,6 @@ const MenuComponent: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      {/* Points Section */}
       <Text
         className={`${
           theme === "dark" ? "text-white" : "text-black"

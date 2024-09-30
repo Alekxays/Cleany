@@ -8,14 +8,16 @@ import React, {
 import { View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
-import { useTheme } from "../context/ThemeContext"; // Import your theme context
+import { useTheme } from "../context/ThemeContext";
+import axios from "axios";
 
 const MapComponent = forwardRef((props, ref) => {
-  const { theme } = useTheme(); // Access the theme context
+  const { theme } = useTheme();
   const [location, setLocation] = useState<Location.LocationObject | null>(
     null
   );
   const [compostMarkers, setCompostMarkers] = useState([]);
+  const [toiletsMarkers, setToiletsMarkers] = useState([]);
   const mapRef = useRef<MapView | null>(null);
 
   useImperativeHandle(ref, () => ({
@@ -44,29 +46,79 @@ const MapComponent = forwardRef((props, ref) => {
   }));
 
   useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        return;
+    const fetchCompostMarkers = async () => {
+      try {
+        const response = await axios.get(
+          "https://opendata.paris.fr/api/explore/v2.1/catalog/datasets/dechets-menagers-points-dapport-volontaire-composteurs/records?limit=30"
+        );
+        const compostData = response.data.results.map((record) => ({
+          operateur: record.operateur,
+          adresse: record.adresse,
+          geo_point_2d: {
+            lat: record.geo_point_2d.lat,
+            lon: record.geo_point_2d.lon,
+          },
+        }));
+        setCompostMarkers(compostData);
+      } catch (error) {
+        console.error("Failed to fetch compost markers", error);
       }
+    };
 
-      let userLocation = await Location.getCurrentPositionAsync({});
-      setLocation(userLocation);
+    const fetchToiletsMarkers = async () => {
+      let toilets = [];
+      let page = 0;
+      const limit = 100;
 
-      const response = await fetch(
-        "https://opendata.paris.fr/api/explore/v2.1/catalog/datasets/dechets-menagers-points-dapport-volontaire-composteurs/records?limit=30"
-      );
-      const data = await response.json();
-      const composts = data.results.map((record) => ({
-        operateur: record.operateur,
-        adresse: record.adresse,
-        geo_point_2d: {
-          lat: record.geo_point_2d.lat,
-          lon: record.geo_point_2d.lon,
-        },
-      }));
-      setCompostMarkers(composts);
-    })();
+      try {
+        while (true) {
+          const response = await axios.get(
+            `https://opendata.paris.fr/api/explore/v2.1/catalog/datasets/sanisettesparis/records?limit=${limit}&offset=${
+              page * limit
+            }`
+          );
+          const data = response.data.results;
+
+          if (data.length === 0) break;
+
+          toilets = toilets.concat(
+            data.map((record) => ({
+              adresse: record.adresse || "Adresse non disponible",
+              geo_point_2d: record.geo_point_2d
+                ? {
+                    lat: record.geo_point_2d.lat || 0,
+                    lon: record.geo_point_2d.lon || 0,
+                  }
+                : { lat: 0, lon: 0 },
+            }))
+          );
+          page++;
+        }
+        setToiletsMarkers(toilets);
+      } catch (error) {
+        console.error("Failed to fetch toilets markers", error);
+      }
+    };
+
+    const initializeData = async () => {
+      try {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== "granted") {
+          console.error("Location permission not granted");
+          return;
+        }
+
+        const userLocation = await Location.getCurrentPositionAsync({});
+        setLocation(userLocation);
+
+        await fetchCompostMarkers();
+        await fetchToiletsMarkers();
+      } catch (error) {
+        console.error("Error during data initialization", error);
+      }
+    };
+
+    initializeData();
   }, []);
 
   const findNearestCompost = (userLocation, composts) => {
@@ -120,7 +172,7 @@ const MapComponent = forwardRef((props, ref) => {
         showsUserLocation={true}
         zoomEnabled={true}
         scrollEnabled={true}
-        userInterfaceStyle={theme} // Add dynamic map styling based on the theme
+        userInterfaceStyle={theme}
       >
         {compostMarkers.map((compost, index) => (
           <Marker
@@ -131,7 +183,20 @@ const MapComponent = forwardRef((props, ref) => {
             }}
             title={compost.operateur}
             description={compost.adresse}
-            image={require("../assets/images/ping_composte.png")} // You can change this to a themed image if required
+            image={require("../assets/images/ping_composte.png")}
+          />
+        ))}
+
+        {toiletsMarkers.map((toilet, index) => (
+          <Marker
+            key={index}
+            coordinate={{
+              latitude: toilet.geo_point_2d.lat,
+              longitude: toilet.geo_point_2d.lon,
+            }}
+            title="Toilette Publique"
+            description={toilet.adresse}
+            image={require("../assets/images/ping_toilet.png")}
           />
         ))}
       </MapView>
